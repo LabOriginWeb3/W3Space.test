@@ -29,7 +29,7 @@ function userLogin() {
 function heartBeat() {
     const msg = {
         sort: 1002,
-        id: 121,
+        id: 108,
         data: null
     }
     socket.send(JSON.stringify(msg));
@@ -57,6 +57,19 @@ function enterMap() {
     socket.send(JSON.stringify(msg));
 }
 
+function move() {
+    const msg = {
+        sort: 1002,
+        id: 102,
+        data: {
+            mapid: 102,
+            x: 27,
+            y: 33
+        }
+    }
+    socket.send(JSON.stringify(msg));
+}
+
 socket.onopen = async function(e) {
     console.log("[open] Connection established");
     console.log("User Login");
@@ -71,7 +84,8 @@ socket.onmessage = function(event) {
     console.log(`[message] Data received from server: ${event.data}`);
     if (JSON.parse(event.data).id === 121) {
         console.log("heart beat!")
-        heartBeat()
+        heartBeat();
+        move();
     }
 };
 
