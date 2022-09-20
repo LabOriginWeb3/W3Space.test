@@ -1,8 +1,11 @@
 const WebSocket = require('ws');
-let socket = new WebSocket("wss://alpha.w3.work/");
+let socket = new WebSocket("wss://metahq.w3work.org");
 
-function sendMessage() {
-    // Construct a msg object containing the data the server needs to process the message from the chat client.
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function userLogin() {
     const msg = {
         sort: 1001,
         id: 101,
@@ -10,30 +13,66 @@ function sendMessage() {
             nickname: "Cuegod",
             headurl: "",
             image: 2,
-            address: "0x21A8652b81adb2420477Ccd3D156002E43D1BbD3",
+            address: "0xFBF5eA986C83bE81777A975F0E99c54C183dd2A3",
             roomaddress: "",
-            roomposx: "",
-            roomposy: "",
+            roomposx: 0,
+            roomposy: 0,
             meeting: "",
             thingroomaddress: "",
             nftname: "Cuegod",
             nftid: 6
         }
     };
-
-    // Send the msg object as a JSON-formatted string.
     socket.send(JSON.stringify(msg));
-
 }
 
-socket.onopen = function(e) {
+function heartBeat() {
+    const msg = {
+        sort: 1002,
+        id: 121,
+        data: null
+    }
+    socket.send(JSON.stringify(msg));
+}
+
+function loadMap() {
+    const msg = {
+        sort: 1002,
+        id: 101,
+        data: null
+    }
+    socket.send(JSON.stringify(msg));
+}
+
+function enterMap() {
+    const msg = {
+        sort: 1002,
+        id: 103,
+        data: {
+            mapid: 102,
+            posx: 26,
+            posy: 33
+        }
+    }
+    socket.send(JSON.stringify(msg));
+}
+
+socket.onopen = async function(e) {
     console.log("[open] Connection established");
-    console.log("Sending to server");
-    sendMessage();
+    console.log("User Login");
+    userLogin();
+    console.log("Load Map");
+    loadMap();
+    console.log("Enter Map");
+    enterMap();
 };
 
 socket.onmessage = function(event) {
     console.log(`[message] Data received from server: ${event.data}`);
+    if (JSON.parse(event.data).id === 121) {
+        console.log("heart beat!")
+        heartBeat()
+    }
 };
 
 socket.onclose = function(event) {
