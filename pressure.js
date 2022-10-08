@@ -8,7 +8,7 @@ function sleep(ms) {
 const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 let posx = 26;
 let posy = 33;
-const moveSteps = [0, -1, 0, 1];
+const moveSteps = [0, -1, 0, 1, 1, 1, 1, 1, 1];
 
 function generateName(length) {
     let result = ' ';
@@ -21,10 +21,6 @@ function generateName(length) {
 
 function generateId(length) {
     return Math.floor(Math.random() * length) + 1;
-}
-
-function generateNftId() {
-    return Math.floor(Math.random() * 100001);
 }
 
 
@@ -43,8 +39,8 @@ function userLogin() {
             roomposy: 0,
             meeting: "",
             thingroomaddress: "",
-            nftname: generateName(generateId(10)),
-            nftid: generateNftId()
+            nftname: "",
+            nftid: 0
         }
     };
     socket.send(JSON.stringify(msg));
@@ -87,7 +83,7 @@ function enterMap() {
 function getMoveSteps() {
     const steps = [];
     for (let i = 0; i < 4; i++) {
-        const step = moveSteps[generateId(3)];
+        const step = moveSteps[generateId(8)];
         const direction = generateId(2);
         if (direction === 1) {
             posx = posx + step
