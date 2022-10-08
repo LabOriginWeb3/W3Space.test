@@ -5,28 +5,53 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+let lastX = 26;
+let lastY = 33;
+const moveSteps = [0, -1, 0, 1];
+
+function generateName(length) {
+    let result = ' ';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+function generateId(length) {
+    return Math.floor(Math.random() * length) + 1;
+}
+
+function generateNftId() {
+    return Math.floor(Math.random() * 100001);
+}
+
+
 function userLogin() {
+    console.log("User Login");
     const msg = {
         sort: 1001,
         id: 101,
         data: {
-            nickname: "Cuegod",
+            nickname: generateName(generateId(10)),
             headurl: "",
-            image: 2,
+            image: generateId(10),
             address: "0xFBF5eA986C83bE81777A975F0E99c54C183dd2A3",
             roomaddress: "",
             roomposx: 0,
             roomposy: 0,
             meeting: "",
             thingroomaddress: "",
-            nftname: "Cuegod",
-            nftid: 6
+            nftname: generateName(generateId(10)),
+            nftid: generateNftId()
         }
     };
     socket.send(JSON.stringify(msg));
 }
 
 function heartBeat() {
+    console.log("heart beat")
     const msg = {
         sort: 1002,
         id: 108,
@@ -36,6 +61,7 @@ function heartBeat() {
 }
 
 function loadMap() {
+    console.log("Load Map");
     const msg = {
         sort: 1002,
         id: 101,
@@ -45,6 +71,7 @@ function loadMap() {
 }
 
 function enterMap() {
+    console.log("Enter Map");
     const msg = {
         sort: 1002,
         id: 103,
@@ -57,14 +84,14 @@ function enterMap() {
     socket.send(JSON.stringify(msg));
 }
 
-function move() {
+function move(posx, posy) {
+    console.log("Move")
     const msg = {
         sort: 1002,
         id: 102,
         data: {
             mapid: 102,
-            x: 27,
-            y: 33
+            ary:[{x: posx, y: posy}]
         }
     }
     socket.send(JSON.stringify(msg));
@@ -72,20 +99,22 @@ function move() {
 
 socket.onopen = async function(e) {
     console.log("[open] Connection established");
-    console.log("User Login");
     userLogin();
-    console.log("Load Map");
     loadMap();
-    console.log("Enter Map");
     enterMap();
 };
 
 socket.onmessage = function(event) {
     console.log(`[message] Data received from server: ${event.data}`);
     if (JSON.parse(event.data).id === 121) {
-        console.log("heart beat!")
         heartBeat();
-        move();
+        move(lastX + moveSteps[generateId(3)], lastY + moveSteps[generateId(3)]);
+    }
+    if (JSON.parse(event.data).id === 102 && JSON.parse(event.data).data.ary) {
+        lastX = JSON.parse(event.data).data.ary[0]["x"];
+        lastY = JSON.parse(event.data).data.ary[0]["y"];
+        console.log(lastX)
+        console.log(lastY)
     }
 };
 
