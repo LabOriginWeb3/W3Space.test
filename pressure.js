@@ -6,8 +6,8 @@ function sleep(ms) {
 }
 
 const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-let lastX = 26;
-let lastY = 33;
+let posx = 26;
+let posy = 33;
 const moveSteps = [0, -1, 0, 1];
 
 function generateName(length) {
@@ -84,14 +84,29 @@ function enterMap() {
     socket.send(JSON.stringify(msg));
 }
 
-function move(posx, posy) {
+function getMoveSteps() {
+    const steps = [];
+    for (let i = 0; i < 4; i++) {
+        const step = moveSteps[generateId(3)];
+        const direction = generateId(2);
+        if (direction === 1) {
+            posx = posx + step
+        } else {
+            posy = posy + step
+        }
+        steps.push({x: posx, y: posy})
+    }
+    return steps
+}
+
+function move() {
     console.log("Move")
     const msg = {
         sort: 1002,
         id: 102,
         data: {
             mapid: 102,
-            ary:[{x: posx, y: posy}]
+            ary:getMoveSteps()
         }
     }
     socket.send(JSON.stringify(msg));
@@ -108,13 +123,11 @@ socket.onmessage = function(event) {
     console.log(`[message] Data received from server: ${event.data}`);
     if (JSON.parse(event.data).id === 121) {
         heartBeat();
-        move(lastX + moveSteps[generateId(3)], lastY + moveSteps[generateId(3)]);
+        move();
     }
     if (JSON.parse(event.data).id === 102 && JSON.parse(event.data).data.ary) {
-        lastX = JSON.parse(event.data).data.ary[0]["x"];
-        lastY = JSON.parse(event.data).data.ary[0]["y"];
-        console.log(lastX)
-        console.log(lastY)
+        posx = JSON.parse(event.data).data.ary[0]["x"];
+        posy = JSON.parse(event.data).data.ary[0]["y"];
     }
 };
 
