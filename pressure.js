@@ -8,6 +8,7 @@ function sleep(ms) {
 const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 let posx = 26;
 let posy = 33;
+let initialMove = false;
 const moveSteps = [0, -1, 0, 1, 1, 1, 1, 1, 1];
 
 function generateName(length) {
@@ -115,15 +116,20 @@ socket.onopen = async function(e) {
     enterMap();
 };
 
-socket.onmessage = function(event) {
+socket.onmessage = async function(event) {
     console.log(`[message] Data received from server: ${event.data}`);
     if (JSON.parse(event.data).id === 121) {
         heartBeat();
-        move();
+        if (!initialMove) {
+            initialMove = true;
+            move();
+        }
     }
     if (JSON.parse(event.data).id === 102 && JSON.parse(event.data).data.ary) {
         posx = JSON.parse(event.data).data.ary[0]["x"];
         posy = JSON.parse(event.data).data.ary[0]["y"];
+        await sleep(generateId(10000));
+        move();
     }
 };
 
