@@ -1,5 +1,9 @@
 const WebSocket = require('ws');
 let socket = new WebSocket("wss://metahq.w3work.org");
+const Web3 = require('web3');
+const web3 = new Web3(
+    new Web3.providers.HttpProvider("https://rpc.ankr.com/eth")
+);
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -20,8 +24,13 @@ function generateName(length) {
     return result;
 }
 
-function generateId(length) {
-    return Math.floor(Math.random() * length) + 1;
+function generateAddress() {
+    const account = web3.eth.accounts.create();
+    return account.address;
+}
+
+function randomIntFromInterval(min, max) { // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
 
@@ -31,10 +40,10 @@ function userLogin() {
         sort: 1001,
         id: 101,
         data: {
-            nickname: generateName(generateId(10)),
+            nickname: generateName(randomIntFromInterval(3, 10)),
             headurl: "",
-            image: generateId(10),
-            address: "0xFBF5eA986C83bE81777A975F0E99c54C183dd2A3",
+            image: randomIntFromInterval(1, 10),
+            address: generateAddress(),
             roomaddress: "",
             roomposx: 0,
             roomposy: 0,
@@ -84,8 +93,8 @@ function enterMap() {
 function getMoveSteps() {
     const steps = [];
     for (let i = 0; i < 4; i++) {
-        const step = moveSteps[generateId(8)];
-        const direction = generateId(2);
+        const step = moveSteps[randomIntFromInterval(1, 8)];
+        const direction = randomIntFromInterval(1, 2);
         if (direction === 1) {
             posx = posx + step
         } else {
@@ -128,7 +137,8 @@ socket.onmessage = async function(event) {
     if (JSON.parse(event.data).id === 102 && JSON.parse(event.data).data.ary) {
         posx = JSON.parse(event.data).data.ary[0]["x"];
         posy = JSON.parse(event.data).data.ary[0]["y"];
-        await sleep(generateId(10000));
+        console.log("sleep")
+        await sleep(randomIntFromInterval(3000, 10000));
         move();
     }
 };
