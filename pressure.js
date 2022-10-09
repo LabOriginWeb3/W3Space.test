@@ -13,6 +13,7 @@ const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678
 let posx = 26;
 let posy = 33;
 let initialMove = false;
+let userId = "";
 const moveSteps = [0, -1, 0, 1, 1, 1, 1, 1, 1];
 
 function generateName(length) {
@@ -134,10 +135,12 @@ socket.onmessage = async function(event) {
             move();
         }
     }
-    if (JSON.parse(event.data).id === 102 && JSON.parse(event.data).data.ary) {
+    if (JSON.parse(event.data).id === 201) {
+        userId = JSON.parse(event.data).data.id;
+    }
+    if (JSON.parse(event.data).id === 102 && JSON.parse(event.data).data.ary && JSON.parse(event.data).data.userid === userId) {
         posx = JSON.parse(event.data).data.ary[0]["x"];
         posy = JSON.parse(event.data).data.ary[0]["y"];
-        console.log("sleep")
         await sleep(randomIntFromInterval(3000, 10000));
         move();
     }
