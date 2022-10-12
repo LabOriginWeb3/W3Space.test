@@ -14,7 +14,23 @@ let posx = 26;
 let posy = 33;
 let initialMove = false;
 let userId = "";
-const moveSteps = [0, -1, 0, 1, 1, 1, 1, 1, 1];
+const maxPosx = 155;
+const maxPosy = 122;
+const minPos = 5;
+let iteration = 0;
+let hitBound = 1;
+const moveStep1 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]];
+const moveStep2 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1]];
+const moveStep3 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0]];
+const moveStep4 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1], [1, -1]];
+const moveStep5 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [0, -1], [0, -1], [0, -1], [0, -1], [0, -1]];
+const moveStep6 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1], [-1, -1]];
+const moveStep7 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [-1, 0], [-1, 0], [-1, 0], [-1, 0], [-1, 0]];
+const moveStep8 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1]];
+const moveStep9 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+const moveSteps = [moveStep1, moveStep2, moveStep3, moveStep4, moveStep5, moveStep6, moveStep7, moveStep8, moveStep9]
+
+
 
 function generateName(length) {
     let result = ' ';
@@ -23,6 +39,15 @@ function generateName(length) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+}
+
+function generateNFTNames() {
+    const names = ["BAYC", "Doodles", "Mfers", "MoonBirds", "", "", "", ""]
+    return names[randomIntFromInterval(0, 7)]
+}
+
+function generateNFTIds() {
+    return randomIntFromInterval(1, 1000)
 }
 
 function generateAddress() {
@@ -50,15 +75,15 @@ function userLogin() {
             roomposy: 0,
             meeting: "",
             thingroomaddress: "",
-            nftname: "",
-            nftid: 0
+            nftname: generateNFTNames(),
+            nftid: generateNFTIds()
         }
     };
     socket.send(JSON.stringify(msg));
 }
 
 function heartBeat() {
-    console.log("heart beat")
+    //console.log("heart beat")
     const msg = {
         sort: 1002,
         id: 108,
@@ -92,22 +117,39 @@ function enterMap() {
 }
 
 function getMoveSteps() {
-    const steps = [];
+    const nextSteps = [];
     for (let i = 0; i < 4; i++) {
-        const step = moveSteps[randomIntFromInterval(1, 8)];
-        const direction = randomIntFromInterval(1, 2);
-        if (direction === 1) {
-            posx = posx + step
-        } else {
-            posy = posy + step
+        const steps = moveSteps[(Number(userId) + iteration) % 9];
+        const step = steps[randomIntFromInterval(0, 11)];
+        posx += step[0]
+        posy += step[1]
+        if (posx >= maxPosx) {
+            posx = maxPosx;
+            hitBound += 1;
         }
-        steps.push({x: posx, y: posy})
+        if (posx <= minPos) {
+            posx = 0
+            hitBound += 1;
+        }
+        if (posy >= maxPosy) {
+            posy = maxPosy;
+            hitBound += 1;
+        }
+        if (posy <= minPos) {
+            posy = 0
+            hitBound += 1;
+        }
+        if (hitBound % 10 === 0) {
+            hitBound += 1;
+            iteration += 1;
+        }
+        nextSteps.push({x: posx, y: posy})
     }
-    return steps
+    return nextSteps
 }
 
 function move() {
-    console.log("Move")
+    //console.log("Move")
     const msg = {
         sort: 1002,
         id: 102,
@@ -127,7 +169,7 @@ socket.onopen = async function(e) {
 };
 
 socket.onmessage = async function(event) {
-    console.log(`[message] Data received from server: ${event.data}`);
+    //console.log(`[message] Data received from server: ${event.data}`);
     if (JSON.parse(event.data).id === 121) {
         heartBeat();
         if (!initialMove) {
