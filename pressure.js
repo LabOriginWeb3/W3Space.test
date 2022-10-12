@@ -14,9 +14,9 @@ let posx = 26;
 let posy = 33;
 let initialMove = false;
 let userId = "";
-const maxPosx = 155;
-const maxPosy = 122;
-const minPos = 5;
+const maxPosx = 150;
+const maxPosy = 120;
+const minPos = 10;
 let iteration = 0;
 let hitBound = 1;
 const moveStep1 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]];
@@ -128,7 +128,7 @@ function getMoveSteps() {
             hitBound += 1;
         }
         if (posx <= minPos) {
-            posx = 0
+            posx = minPos
             hitBound += 1;
         }
         if (posy >= maxPosy) {
@@ -136,7 +136,7 @@ function getMoveSteps() {
             hitBound += 1;
         }
         if (posy <= minPos) {
-            posy = 0
+            posy = minPos
             hitBound += 1;
         }
         if (hitBound % 10 === 0) {
