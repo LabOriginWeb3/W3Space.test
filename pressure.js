@@ -123,8 +123,8 @@ function enterRoom() {
         id: 103,
         data: {
             mapid: 103,
-            posx: 128,
-            posy: 29
+            posx: 77,
+            posy: 47
         }
     }
     socket.send(JSON.stringify(msg));
