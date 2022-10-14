@@ -14,9 +14,9 @@ let posx = 26;
 let posy = 33;
 let initialMove = false;
 let userId = "";
-const maxPosx = 150;
-const maxPosy = 120;
-const minPos = 10;
+const maxPosx = 134;
+const maxPosy = 80;
+const minPos = 5;
 let iteration = 0;
 let hitBound = 1;
 const moveStep1 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]];
@@ -116,6 +116,20 @@ function enterMap() {
     socket.send(JSON.stringify(msg));
 }
 
+function enterRoom() {
+    console.log("Enter Room");
+    const msg = {
+        sort: 1002,
+        id: 103,
+        data: {
+            mapid: 103,
+            posx: 128,
+            posy: 29
+        }
+    }
+    socket.send(JSON.stringify(msg));
+}
+
 function getMoveSteps() {
     const nextSteps = [];
     for (let i = 0; i < 4; i++) {
@@ -166,6 +180,7 @@ socket.onopen = async function(e) {
     userLogin();
     loadMap();
     enterMap();
+    enterRoom();
 };
 
 socket.onmessage = async function(event) {
