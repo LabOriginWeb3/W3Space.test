@@ -14,8 +14,8 @@ let posx = 26;
 let posy = 33;
 let initialMove = false;
 let userId = "";
-const maxPosx = 134;
-const maxPosy = 80;
+const maxPosx = 155;
+const maxPosy = 120;
 const minPos = 5;
 let iteration = 0;
 let hitBound = 1;
@@ -180,7 +180,6 @@ socket.onopen = async function(e) {
     userLogin();
     loadMap();
     enterMap();
-    enterRoom();
 };
 
 socket.onmessage = async function(event) {
