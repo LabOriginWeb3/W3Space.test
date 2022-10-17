@@ -12,7 +12,7 @@ function sleep(ms) {
 const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 let posx = 26;
 let posy = 33;
-let initialMove = false;
+let heartBeats = 0;
 let userId = "";
 const maxPosx = 134;
 const maxPosy = 80;
@@ -75,8 +75,8 @@ function userLogin() {
             roomposy: 0,
             meeting: "",
             thingroomaddress: "",
-            nftname: generateNFTNames(),
-            nftid: generateNFTIds()
+            nftname: "",
+            nftid: 0
         }
     };
     socket.send(JSON.stringify(msg));
@@ -127,6 +127,8 @@ function enterRoom() {
             posy: 47
         }
     }
+    posx = 77;
+    posy = 47;
     socket.send(JSON.stringify(msg));
 }
 
@@ -168,7 +170,7 @@ function move() {
         sort: 1002,
         id: 102,
         data: {
-            mapid: 102,
+            mapid: 103,
             ary:getMoveSteps()
         }
     }
@@ -184,13 +186,16 @@ socket.onopen = async function(e) {
 };
 
 socket.onmessage = async function(event) {
-    //console.log(`[message] Data received from server: ${event.data}`);
+    console.log(`[message] Data received from server: ${event.data}`);
     if (JSON.parse(event.data).id === 121) {
         heartBeat();
-        if (!initialMove) {
-            initialMove = true;
+        if (heartBeats === 1) {
+            enterRoom();
+        }
+        if (heartBeats === 2) {
             move();
         }
+        heartBeats += 1;
     }
     if (JSON.parse(event.data).id === 201) {
         userId = JSON.parse(event.data).data.id;
