@@ -204,7 +204,7 @@ socket.onmessage = async function(event) {
     if (JSON.parse(event.data).id === 104 && JSON.parse(event.data).data.targetmap === 103 && JSON.parse(event.data).data.userid === userId) {
         enteredRoom = true;
     }
-    if (JSON.parse(event.data).id === 103 && JSON.parse(event.data).data.mapid !== 103 && JSON.parse(event.data).data.userid === userId) {
+    if (JSON.parse(event.data).id === 103 && JSON.parse(event.data).data.mapid === 102 && JSON.parse(event.data).data.userid === userId) {
         enteredMap = true;
     }
     if (JSON.parse(event.data).id === 102 && JSON.parse(event.data).data.ary && JSON.parse(event.data).data.userid === userId) {
