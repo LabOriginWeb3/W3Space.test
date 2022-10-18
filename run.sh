@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-for i in {1..100}; do
+for i in {1..200}; do
     nohup node pressure.js &
 done
 

@@ -19,6 +19,7 @@ const maxPosy = 80;
 const minPos = 5;
 let iteration = 0;
 let hitBound = 1;
+let enteredRoom = false;
 const moveStep1 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]];
 const moveStep2 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1]];
 const moveStep3 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0]];
@@ -189,16 +190,18 @@ socket.onmessage = async function(event) {
     // console.log(`[message] Data received from server: ${event.data}`);
     if (JSON.parse(event.data).id === 121) {
         heartBeat();
-        if (heartBeats === 1) {
+        if (!enteredRoom) {
             enterRoom();
-        }
-        if (heartBeats === 2) {
+        } else {
             move();
         }
         heartBeats += 1;
     }
     if (JSON.parse(event.data).id === 201) {
         userId = JSON.parse(event.data).data.id;
+    }
+    if (JSON.parse(event.data).id === 104 && JSON.parse(event.data).data.targetmap === 103) {
+        enteredRoom = true;
     }
     if (JSON.parse(event.data).id === 102 && JSON.parse(event.data).data.ary && JSON.parse(event.data).data.userid === userId) {
         posx = JSON.parse(event.data).data.ary[0]["x"];
