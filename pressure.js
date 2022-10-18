@@ -187,7 +187,7 @@ socket.onopen = async function(e) {
 };
 
 socket.onmessage = async function(event) {
-    console.log(`[message] Data received from server: ${event.data}`);
+    // console.log(`[message] Data received from server: ${event.data}`);
     if (JSON.parse(event.data).id === 121) {
         heartBeat();
         if (enteredMap && !enteredRoom) {
