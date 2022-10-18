@@ -12,7 +12,6 @@ function sleep(ms) {
 const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 let posx = 26;
 let posy = 33;
-let heartBeats = 0;
 let userId = "";
 const maxPosx = 134;
 const maxPosy = 80;
@@ -20,6 +19,8 @@ const minPos = 5;
 let iteration = 0;
 let hitBound = 1;
 let enteredRoom = false;
+let enteredMap = false;
+let initialMove = false;
 const moveStep1 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]];
 const moveStep2 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1]];
 const moveStep3 = [[0, 0], [-1, 0], [1, 0], [0, 1], [0, -1], [-1, 1], [1, -1], [1, 0], [1, 0], [1, 0], [1, 0], [1, 0]];
@@ -183,25 +184,28 @@ socket.onopen = async function(e) {
     userLogin();
     loadMap();
     enterMap();
-    enterRoom();
 };
 
 socket.onmessage = async function(event) {
-    // console.log(`[message] Data received from server: ${event.data}`);
+    console.log(`[message] Data received from server: ${event.data}`);
     if (JSON.parse(event.data).id === 121) {
         heartBeat();
-        if (!enteredRoom) {
+        if (enteredMap && !enteredRoom) {
             enterRoom();
-        } else {
+        }
+        if (enteredRoom && !initialMove) {
+            initialMove = true;
             move();
         }
-        heartBeats += 1;
     }
     if (JSON.parse(event.data).id === 201) {
         userId = JSON.parse(event.data).data.id;
     }
-    if (JSON.parse(event.data).id === 104 && JSON.parse(event.data).data.targetmap === 103) {
+    if (JSON.parse(event.data).id === 104 && JSON.parse(event.data).data.targetmap === 103 && JSON.parse(event.data).data.userid === userId) {
         enteredRoom = true;
+    }
+    if (JSON.parse(event.data).id === 103 && JSON.parse(event.data).data.mapid !== 103 && JSON.parse(event.data).data.userid === userId) {
+        enteredMap = true;
     }
     if (JSON.parse(event.data).id === 102 && JSON.parse(event.data).data.ary && JSON.parse(event.data).data.userid === userId) {
         posx = JSON.parse(event.data).data.ary[0]["x"];
