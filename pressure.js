@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-let socket = new WebSocket("wss://metahq.w3work.org");
+let socket = new WebSocket("wss://wxgame.qweiyou.com:5745");
 const Web3 = require('web3');
 const web3 = new Web3(
     new Web3.providers.HttpProvider("https://rpc.ankr.com/eth")
@@ -77,8 +77,8 @@ function userLogin() {
             roomposy: 0,
             meeting: "",
             thingroomaddress: "",
-            nftname: "",
-            nftid: 0
+            nftname: generateNFTNames(),
+            nftid: generateNFTIds(),
         }
     };
     socket.send(JSON.stringify(msg));
@@ -124,7 +124,7 @@ function enterRoom() {
         sort: 1002,
         id: 103,
         data: {
-            mapid: 103,
+            mapid: 1001,
             posx: 77,
             posy: 47
         }
@@ -172,7 +172,7 @@ function move() {
         sort: 1002,
         id: 102,
         data: {
-            mapid: 103,
+            mapid: 1001,
             ary:getMoveSteps()
         }
     }
@@ -201,7 +201,7 @@ socket.onmessage = async function(event) {
     if (JSON.parse(event.data).id === 201) {
         userId = JSON.parse(event.data).data.id;
     }
-    if (JSON.parse(event.data).id === 104 && JSON.parse(event.data).data.targetmap === 103 && JSON.parse(event.data).data.userid === userId) {
+    if (JSON.parse(event.data).id === 104 && JSON.parse(event.data).data.targetmap === 1001 && JSON.parse(event.data).data.userid === userId) {
         enteredRoom = true;
     }
     if (JSON.parse(event.data).id === 103 && JSON.parse(event.data).data.mapid === 102 && JSON.parse(event.data).data.userid === userId) {
