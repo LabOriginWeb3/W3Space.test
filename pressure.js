@@ -1,5 +1,7 @@
 const WebSocket = require('ws');
-let socket = new WebSocket("wss://wxgame.qweiyou.com:5745");
+// let socket = new WebSocket("wss://wxgame.qweiyou.com:5745");   // 阿杜服
+// let socket = new WebSocket("wss://metahq.w3work.org");    // Testnet
+let socket = new WebSocket("wss://metahq.w3.work");  // Mainnet
 const Web3 = require('web3');
 const web3 = new Web3(
     new Web3.providers.HttpProvider("https://rpc.ankr.com/eth")
@@ -10,8 +12,8 @@ function sleep(ms) {
 }
 
 const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-let posx = 26;
-let posy = 33;
+let posx = 77;
+let posy = 47;
 let userId = "";
 const maxPosx = 134;
 const maxPosy = 80;
@@ -195,6 +197,7 @@ socket.onmessage = async function(event) {
         }
         if (enteredRoom && !initialMove) {
             initialMove = true;
+            console.log("initial move")
             move();
         }
     }
