@@ -12,11 +12,11 @@ function sleep(ms) {
 }
 
 const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-let posx = 77;
-let posy = 47;
+let posx = 50;
+let posy = 40;
 let userId = "";
-const maxPosx = 134;
-const maxPosy = 80;
+const maxPosx = 100;
+const maxPosy = 70;
 const minPos = 5;
 let iteration = 0;
 let hitBound = 1;
@@ -127,12 +127,10 @@ function enterRoom() {
         id: 103,
         data: {
             mapid: 1001,
-            posx: 77,
-            posy: 47
+            posx,
+            posy
         }
     }
-    posx = 77;
-    posy = 47;
     socket.send(JSON.stringify(msg));
 }
 
